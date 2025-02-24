@@ -8,11 +8,11 @@ class ReportGenerator:
         self.reports_dir = Path.home() / '.scanwich' / 'reports'
         self.reports_dir.mkdir(parents=True, exist_ok=True)
 
-    def generate_report(self, system_metrics, process_data, analysis):
+    def generate_report(self, system_metrics, process_data, analysis, network_metrics, top_metrics):
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
         # Generate both MD and HTML reports
-        md_content = self._generate_markdown(system_metrics, process_data, analysis)
+        md_content = self._generate_markdown(system_metrics, process_data, analysis, network_metrics, top_metrics)
         html_content = self._convert_to_html(md_content)
         
         # Save reports
@@ -24,7 +24,7 @@ class ReportGenerator:
         
         return str(md_path), str(html_path)
 
-    def _generate_markdown(self, system_metrics, process_data, analysis):
+    def _generate_markdown(self, system_metrics, process_data, analysis, network_metrics, top_metrics):
         md = f"""# System Analysis Report
 Generated: {system_metrics['timestamp']}
 
@@ -32,9 +32,23 @@ Generated: {system_metrics['timestamp']}
 - CPU Usage: {system_metrics['cpu_total']}%
 - Memory Usage: {system_metrics['memory_total']}%
 
+## Top Commands
+| Command | Count |
+|---------|-------|
+"""
+        for cmd, count in top_metrics.items():
+            md += f"| {cmd} | {count} |\n"
+
+        md += f"""
+## Network Activity
+- Bytes Sent: {network_metrics['bytes_sent']}
+- Bytes Received: {network_metrics['bytes_recv']}
+- Packets Sent: {network_metrics['packets_sent']}
+- Packets Received: {network_metrics['packets_recv']}
+
 ## Top Processes
-| Process Name | PID | CPU % | Memory % |
-|-------------|-----|-------|-----------|
+| Process Name | PID  | CPU % | Memory % |
+|-------------|------|-------|----------|
 """
         for proc in process_data[:5]:  # Top 5 processes
             md += f"| {proc['name']} | {proc['pid']} | {proc['cpu_percent']:.1f} | {proc['memory_percent']:.1f} |\n"
