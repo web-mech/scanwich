@@ -22,7 +22,7 @@ Scanwich is an AI-powered system monitoring tool that analyzes your system's pro
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/scanwich.git
+   git clone https://github.com/web-mech/scanwich.git
    cd scanwich
    ```
 2. Install dependencies:
